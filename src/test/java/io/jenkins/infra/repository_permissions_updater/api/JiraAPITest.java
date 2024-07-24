@@ -1,6 +1,5 @@
-package io.jenkins.infra.repository_permissions_updater;
+package io.jenkins.infra.repository_permissions_updater.api;
 
-import io.jenkins.infra.repository_permissions_updater.api.JiraAPI;
 import io.jenkins.infra.repository_permissions_updater.helper.URLHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
