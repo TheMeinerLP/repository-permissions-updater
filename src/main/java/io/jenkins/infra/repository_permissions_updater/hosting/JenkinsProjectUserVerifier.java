@@ -1,6 +1,6 @@
 package io.jenkins.infra.repository_permissions_updater.hosting;
 
-import io.jenkins.infra.repository_permissions_updater.KnownUsers;
+import io.jenkins.infra.repository_permissions_updater.models.KnownUsers;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.stream.Collectors;

@@ -1,4 +1,6 @@
-package io.jenkins.infra.repository_permissions_updater;
+package io.jenkins.infra.repository_permissions_updater.api;
+
+import io.jenkins.infra.repository_permissions_updater.models.Definition;
 
 import java.io.IOException;
 

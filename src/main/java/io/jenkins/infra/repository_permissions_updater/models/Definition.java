@@ -1,4 +1,4 @@
-package io.jenkins.infra.repository_permissions_updater;
+package io.jenkins.infra.repository_permissions_updater.models;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 

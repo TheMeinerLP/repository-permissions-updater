@@ -1,4 +1,4 @@
-package io.jenkins.infra.repository_permissions_updater;
+package io.jenkins.infra.repository_permissions_updater.api;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;

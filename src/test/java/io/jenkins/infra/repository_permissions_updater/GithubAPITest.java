@@ -1,16 +1,15 @@
 package io.jenkins.infra.repository_permissions_updater;
 
+import io.jenkins.infra.repository_permissions_updater.api.GitHubAPI;
+import io.jenkins.infra.repository_permissions_updater.api.GitHubImpl;
 import io.jenkins.infra.repository_permissions_updater.helper.URLHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;

@@ -1,4 +1,4 @@
-package io.jenkins.infra.repository_permissions_updater;
+package io.jenkins.infra.repository_permissions_updater.api;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 

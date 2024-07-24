@@ -4,6 +4,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import groovy.io.FileType
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
+import io.jenkins.infra.repository_permissions_updater.api.GitHubAPI
+import io.jenkins.infra.repository_permissions_updater.api.JiraAPI
+import io.jenkins.infra.repository_permissions_updater.models.Definition
+import io.jenkins.infra.repository_permissions_updater.models.KnownUsers
+import io.jenkins.infra.repository_permissions_updater.models.TeamDefinition
+import io.jenkins.infra.repository_permissions_updater.util.CryptoUtil
 import io.jenkins.lib.support_log_formatter.SupportLogFormatter
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
