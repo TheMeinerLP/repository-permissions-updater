@@ -2,29 +2,26 @@ package io.jenkins.infra.repository_permissions_updater;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SuppressFBWarnings({
     "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD",
-    "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD",
-    "SE_NO_SERIALVERSIONID"
+    "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD"
 })
-public class Definition implements Serializable {
+public class Definition {
 
-    public static class CD implements Serializable {
+    public static class CD {
         public boolean enabled;
         public boolean exclusive = true;
     }
 
-    public static class Security implements Serializable {
+    public static class Security {
         public SecurityContacts contacts;
     }
 
-    public static class SecurityContacts implements Serializable {
+    public static class SecurityContacts {
         public String jira;
     }
 
@@ -34,11 +31,7 @@ public class Definition implements Serializable {
      * Call {@link #isJira()} and/or {@link #isGitHubIssues()} to determine the kind of tracker.
      * Some invalid input may result in both returning {@code false}, in that case other methods will throw exceptions.
      */
-    public static class IssueTracker implements Serializable {
-        public interface JiraComponentSource {
-            String getComponentId(String componentName) throws IOException;
-        }
-
+    public static class IssueTracker {
         private static final Logger LOGGER = Logger.getLogger(IssueTracker.class.getName());
 
         public String jira;
@@ -53,6 +46,9 @@ public class Definition implements Serializable {
                 LOGGER.log(Level.INFO, "Unexpected Jira component name, skipping: " + jira);
                 return false;
             }
+
+            assertJiraIdFormatValid();
+
             return true;
         }
 
@@ -68,27 +64,16 @@ public class Definition implements Serializable {
         }
 
         @SuppressFBWarnings(value = "NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD",
-                            justification = "All calls are guarded by jira null check in isJira()")
-        private String loadComponentId(JiraComponentSource source) throws IOException {
-            String jiraComponentId = jira;
+                justification = "All calls are guarded by jira null check in isJira()")
+        private void assertJiraIdFormatValid() {
             if (!jira.matches("[0-9]+")) {
-                // CreateIssueDetails needs the numeric Jira component ID
-                jiraComponentId = source.getComponentId(jira);
-                if (jiraComponentId == null) {
-                    LOGGER.warning("Failed to determine Jira component ID for '" + jira + "', the component may not exist");
-                    return null;
-                }
+                throw new IllegalArgumentException("Jira component ID must be numeric, but got: " + jira);
             }
-            return jiraComponentId;
         }
 
-        public String getViewUrl(JiraComponentSource source) throws IOException {
+        public String getViewUrl() {
             if (isJira()) {
-                final String id = loadComponentId(source);
-                if (id != null) {
-                    return "https://issues.jenkins.io/issues/?jql=component=" + id;
-                }
-                return null;
+                return "https://issues.jenkins.io/issues/?jql=component=" + jira;
             }
             if (isGitHubIssues()) {
                 return "https://github.com/" + github + "/issues";
@@ -96,16 +81,12 @@ public class Definition implements Serializable {
             throw new IllegalStateException("Invalid issue tracker: " + github + " / " + jira);
         }
 
-        public String getReportUrl(JiraComponentSource source) throws IOException {
+        public String getReportUrl() {
             if (!report) {
                 return null;
             }
             if (isJira()) {
-                final String id = loadComponentId(source);
-                if (id != null) {
-                    return "https://www.jenkins.io/participate/report-issue/redirect/#" + id;
-                }
-                return null;
+                return "https://www.jenkins.io/participate/report-issue/redirect/#" + jira;
             }
             if (isGitHubIssues()) {
                 return "https://github.com/" + github + "/issues/new/choose"; // The 'choose' URL works even when there are no issue templates
