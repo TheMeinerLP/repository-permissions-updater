@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.logging.Level;
 
-public sealed interface ArtifactoryAPI permits ArtifactoryImpl {
+public interface ArtifactoryAPI {
     /**
      * List all permission targets whose name starts with the configured prefix.
      *

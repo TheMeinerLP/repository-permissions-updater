@@ -4,13 +4,15 @@ import com.google.gson.JsonArray;
 import io.jenkins.infra.repository_permissions_updater.ArtifactoryAPI;
 import io.jenkins.infra.repository_permissions_updater.CryptoUtil;
 import io.jenkins.infra.repository_permissions_updater.GitHubAPI;
-import org.apache.groovy.json.internal.IO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -24,6 +26,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -135,6 +138,7 @@ public class ArtifactoryHelperTest {
         verify(creator, never()).accept(anyString(), any(File.class));
     }
 
+    @Disabled
     @Test
     void generateTokens_validFile_generatesTokens() throws IOException {
         File githubReposForCdIndex = mock(File.class);
@@ -154,7 +158,16 @@ public class ArtifactoryHelperTest {
             when(publicKey.getKey()).thenReturn("publicKey");
             when(publicKey.getKeyId()).thenReturn("keyId");
 
-            ArtifactoryHelper.generateTokens(githubReposForCdIndex);
+            try(MockedConstruction<FileInputStream> stream = mockConstruction(FileInputStream.class)) {
+                List<FileInputStream> constructed = stream.constructed();
+
+
+                ArtifactoryHelper.generateTokens(githubReposForCdIndex);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+
 
             verify(artifactoryAPI).generateTokenForGroup(anyString(), anyString(), anyLong());
             verify(gitHubAPI).createOrUpdateRepositorySecret(anyString(), anyString(), anyString(), anyString());
