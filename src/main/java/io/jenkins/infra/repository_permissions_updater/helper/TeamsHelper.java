@@ -25,7 +25,7 @@ public final class TeamsHelper {
 
     private static final Yaml YAML_TEAM_DEFINITION = new Yaml(new Constructor(TeamDefinition.class, new LoaderOptions()));
     private static final String YAML_FILE_EXTENSION = "%s.yml";
-    private static final Path TEAMS_DIR = Path.of("teams");
+    private static final Path TEAMS_DIR = Path.of(System.getProperty("teamsDir", "./teams"));
     private static final Predicate<String> DEVELOPER_START_WITH = s -> s.startsWith("@");
     private static final Logger LOGGER = java.util.logging.Logger.getLogger(TeamsHelper.class.getName());
 
