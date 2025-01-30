@@ -6,7 +6,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.jenkins.infra.repository_permissions_updater.ArtifactoryAPI;
 import io.jenkins.infra.repository_permissions_updater.Definition;
-import io.jenkins.infra.repository_permissions_updater.JiraAPI;
 import io.jenkins.infra.repository_permissions_updater.KnownUsers;
 import io.jenkins.infra.repository_permissions_updater.TeamDefinition;
 import io.jenkins.infra.repository_permissions_updater.model.ApiPayloadHolder;
@@ -159,7 +158,7 @@ final class PayloadHelperImpl implements PayloadHelper {
                 }
                 if (!Arrays.asList(definition.getDevelopers()).isEmpty()) {
                     List<Definition> definitions = apiPayloadHolder.cdEnabledComponentsByGitHub().computeIfAbsent(definition.getGithub(), k -> new ArrayList<>());
-                    LOGGER.log(Level.INFO, "CD-enabled component '{}' in repository '{}'", new Object[]{definition.getName(), definition.getGithub() });
+                    LOGGER.log(Level.INFO, "CD-enabled component {} in repository {}", new Object[]{definition.getName(), definition.getGithub() });
                     definitions.add(definition);
                 } else {
                     LOGGER.log(Level.INFO, "Skipping CD-enablement for '{}' in repository '{}' as it is unmaintained", new Object[]{definition.getName(), definition.getGithub()});
@@ -181,20 +180,12 @@ final class PayloadHelperImpl implements PayloadHelper {
                         ret.put("type", tracker.getType());
                         ret.put("reference", tracker.getReference());
                         String viewUrl;
-                        try {
-                            viewUrl = tracker.getViewUrl(JiraAPI.getInstance());
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                        viewUrl = tracker.getViewUrl();
                         if (viewUrl != null) {
                             ret.put("viewUrl", viewUrl);
                         }
                         String reportUrl;
-                        try {
-                            reportUrl = tracker.getReportUrl(JiraAPI.getInstance());
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                        reportUrl = tracker.getReportUrl();
                         if (reportUrl != null) {
                             ret.put("reportUrl", reportUrl);
                         }
@@ -280,7 +271,6 @@ final class PayloadHelperImpl implements PayloadHelper {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
         }
 
         try {
@@ -319,7 +309,7 @@ final class PayloadHelperImpl implements PayloadHelper {
                 result.put("users", Arrays.stream(definition.getDevelopers()).collect(Collectors.toMap(this::mapDeveloper, developer -> Arrays.asList("w", "n"))));
             } else {
                 for (String developer : definition.getDevelopers()) {
-                    if (!KnownUsers.existsInJira(developer) && !JiraAPI.getInstance().isUserPresent(developer)) {
+                    if (!KnownUsers.existsInJira(developer)) {
                         reportChecksApiDetails(TEXT_LOGGED_IN_JIRA.formatted(developer), TEXT_LOGGED_IN_JIRA.formatted(developer));
                         throw new RuntimeException("User name not known to Jira: " + developer);
                     }
@@ -340,7 +330,7 @@ final class PayloadHelperImpl implements PayloadHelper {
     }
 
     private String mapDeveloper(String developer) {
-        if (!KnownUsers.existsInArtifactory(developer) && !KnownUsers.existsInJira(developer) && !JiraAPI.getInstance().isUserPresent(developer)) {
+        if (!KnownUsers.existsInArtifactory(developer) && !KnownUsers.existsInJira(developer)) {
             this.reportChecksApiDetails(NEEDS_LOGGED_IN_JIRA_AND_ARTIFACTORY.formatted(developer), TEXT_LOGGED_IN_JIRA_AND_ARTIFACTORY.formatted(developer));
             throw new IllegalStateException("User name not known to Artifactory and Jira: " + developer);
         }
