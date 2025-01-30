@@ -56,7 +56,7 @@ public class Definition {
             if (github == null) {
                 return false;
             }
-            if (!github.startsWith("jenkinsci/")) {
+            if (!(github.startsWith("jenkinsci/") || github.startsWith("jenkins-infra/"))) {
                 LOGGER.log(Level.INFO, "Unexpected GitHub repo for issue tracker, skipping: " + jira);
                 return false;
             }
@@ -81,12 +81,12 @@ public class Definition {
             throw new IllegalStateException("Invalid issue tracker: " + github + " / " + jira);
         }
 
-        public String getReportUrl() {
+        public String getReportUrl(String pluginId) {
             if (!report) {
                 return null;
             }
             if (isJira()) {
-                return "https://www.jenkins.io/participate/report-issue/redirect/#" + jira;
+                return "https://www.jenkins.io/participate/report-issue/redirect/#" + jira + "/" + pluginId;
             }
             if (isGitHubIssues()) {
                 return "https://github.com/" + github + "/issues/new/choose"; // The 'choose' URL works even when there are no issue templates
@@ -125,6 +125,8 @@ public class Definition {
     private String[] paths = new String[0];
     private String[] developers = new String[0];
     private IssueTracker[] issues = new IssueTracker[0];
+    private String[] extraNames = new String[0];
+    private boolean releaseBlocked;
 
     private String github;
 
@@ -155,6 +157,14 @@ public class Definition {
         this.paths = paths.clone();
     }
 
+    public void setExtraNames(String[] extraNames) {
+        this.extraNames = extraNames.clone();
+    }
+
+    public String[] getExtraNames() {
+        return extraNames.clone();
+    }
+
     public IssueTracker[] getIssues() {
         return issues.clone();
     }
@@ -179,8 +189,16 @@ public class Definition {
         this.security = security;
     }
 
+    public boolean isReleaseBlocked() {
+        return releaseBlocked;
+    }
+
+    public void setReleaseBlocked(boolean releaseBlocked) {
+        this.releaseBlocked = releaseBlocked;
+    }
+
     public String getGithub() {
-        if (github != null && github.startsWith("jenkinsci/")) {
+        if (github != null && (github.startsWith("jenkinsci/") || github.startsWith("jenkins-infra/"))) {
             return github;
         }
         return null;
